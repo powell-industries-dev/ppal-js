@@ -1,0 +1,21 @@
+<!doctype html>
+<html>
+    <head>
+        <title>PPAL Example</title>
+    </head>
+
+    <body>
+        <script type="module">
+            import ppal from "./lib/main.js";
+
+            console.log(ppal);
+
+            let testValue = ppal.id.generateObjectId();
+            // console.log(
+            //     `MongoDB ObjectId: ${testValue}, UUID: ${ppal.id.newUuid()}`,
+            // );
+            console.log("wrap implementation 1", ppal.id.wrap(testValue));
+        </script>
+        <p>This is the testing page for the PPAL Javascript library.</p>
+    </body>
+</html>

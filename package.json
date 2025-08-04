@@ -1,0 +1,41 @@
+{
+  "name": "ppal",
+  "version": "0.0.1",
+  "description": "A Javascript utility library by Powell Industries Inc.",
+  "files": [
+    "dist"
+  ],
+  "main": "./dist/ppal.umd.js",
+  "module": "./dist/ppal.es.js",
+  "exports": {
+    ".": {
+      "import": "./dist/ppal.es.js",
+      "require": "./dist/ppal.umd.js"
+    }
+  },
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "keywords": [],
+  "author": "Powell Industries Inc.",
+  "license": "MIT",
+  "type": "commonjs",
+  "repository": {
+    "type": "git",
+    "url": "git+https://BonnyAG@github.com/powell-industries-dev/ppal-js.git"
+  },
+  "bugs": {
+    "url": "https://github.com/powell-industries-dev/ppal-js/issues"
+  },
+  "homepage": "https://github.com/powell-industries-dev/ppal-js#readme",
+  "devDependencies": {
+    "vite": "^7.0.6"
+  },
+  "dependencies": {
+    "lodash": "^4.17.21",
+    "moment": "^2.30.1",
+    "uuid": "^11.1.0"
+  }
+}
