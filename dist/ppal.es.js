@@ -1,30 +1,30 @@
-import u from "moment";
+import c from "moment";
 import r from "lodash";
 const n = [];
 for (let t = 0; t < 256; ++t)
   n.push((t + 256).toString(16).slice(1));
-function g(t, e = 0) {
+function p(t, e = 0) {
   return (n[t[e + 0]] + n[t[e + 1]] + n[t[e + 2]] + n[t[e + 3]] + "-" + n[t[e + 4]] + n[t[e + 5]] + "-" + n[t[e + 6]] + n[t[e + 7]] + "-" + n[t[e + 8]] + n[t[e + 9]] + "-" + n[t[e + 10]] + n[t[e + 11]] + n[t[e + 12]] + n[t[e + 13]] + n[t[e + 14]] + n[t[e + 15]]).toLowerCase();
 }
-let a;
-const p = new Uint8Array(16);
-function l() {
-  if (!a) {
+let d;
+const S = new Uint8Array(16);
+function g() {
+  if (!d) {
     if (typeof crypto > "u" || !crypto.getRandomValues)
       throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
-    a = crypto.getRandomValues.bind(crypto);
+    d = crypto.getRandomValues.bind(crypto);
   }
-  return a(p);
+  return d(S);
 }
 const h = typeof crypto < "u" && crypto.randomUUID && crypto.randomUUID.bind(crypto), m = { randomUUID: h };
-function y(t, e, s) {
+function y(t, e, o) {
   if (m.randomUUID && !t)
     return m.randomUUID();
   t = t || {};
-  const o = t.random ?? t.rng?.() ?? l();
-  if (o.length < 16)
+  const i = t.random ?? t.rng?.() ?? g();
+  if (i.length < 16)
     throw new Error("Random bytes length must be >= 16");
-  return o[6] = o[6] & 15 | 64, o[8] = o[8] & 63 | 128, g(o);
+  return i[6] = i[6] & 15 | 64, i[8] = i[8] & 63 | 128, p(i);
 }
 const x = {
   /**
@@ -39,13 +39,13 @@ const x = {
    * @returns { { $date: string } } A BSON-wrapped date.
    */
   date: (t) => ({ $date: t })
-}, w = {
+}, b = {
   /**
    * Returns the default date
    * @returns { string } The current date and time formatted as an ISO string.
    */
-  date: () => u(/* @__PURE__ */ new Date()).toISOString()
-}, b = {
+  date: () => c(/* @__PURE__ */ new Date()).toISOString()
+}, w = {
   /**
    * Generates a unique MongoDB-compatible ObjectId
    * @returns {string} A new MongoDB ObjectId string.
@@ -62,7 +62,7 @@ const x = {
   // ALIASES
   wrap: x.id
   // ObjectId BSON wrapper
-}, I = {
+}, f = {
   /**
    * Compares two objects and returns an object containing only the differences
    * @param { Object } inputs
@@ -71,22 +71,22 @@ const x = {
    * @param { string } inputs.prefix Optional: Default is an empty string.
    * @returns { Object } An object containing only the differences between inputs.original and inputs.updated.
    */
-  diff: ({ original: t, updated: e, prefix: s = "" }) => !r.isObject(t) || !r.isObject(e) ? r.isEqual(t, e) ? {} : { [s.slice(0, -1)]: e } : r.isArray(t) && r.isArray(e) ? r.isEqual(t, e) ? {} : { [s.slice(0, -1)]: e } : r.transform(
+  diff: ({ original: t, updated: e, prefix: o = "" }) => !r.isObject(t) || !r.isObject(e) ? r.isEqual(t, e) ? {} : { [o.slice(0, -1)]: e } : r.isArray(t) && r.isArray(e) ? r.isEqual(t, e) ? {} : { [o.slice(0, -1)]: e } : r.transform(
     e,
-    (o, i, c) => {
-      const d = s + c;
-      if (!r.has(t, c))
-        o[d] = i;
-      else if (!r.isEqual(i, t[c]))
-        if (r.isObject(i) && r.isObject(t[c])) {
-          const S = (void 0).diff({
-            original: t[c],
-            value: i,
-            prefix: `${d}`
+    (i, s, u) => {
+      const a = o + u;
+      if (!r.has(t, u))
+        i[a] = s;
+      else if (!r.isEqual(s, t[u]))
+        if (r.isObject(s) && r.isObject(t[u])) {
+          const l = (void 0).diff({
+            original: t[u],
+            value: s,
+            prefix: `${a}`
           });
-          r.assign(o, S);
+          r.assign(i, l);
         } else
-          o[d] = i;
+          i[a] = s;
     },
     {}
   ),
@@ -97,7 +97,7 @@ const x = {
    * @param { string[] } inputs.properties Required: An array of properties to check for
    * @returns { boolean } Returns true if at least one property if found, returns false otherwise.
    */
-  hasProperties: ({ object: t, properties: e }) => r.some(e, (s) => !r.isUndefined(r.get(t, s)))
+  hasProperties: ({ object: t, properties: e }) => r.some(e, (o) => !r.isUndefined(r.get(t, o)))
 }, D = {
   /**
    * Checks if a string is unique within an array of strings
@@ -107,7 +107,7 @@ const x = {
    * @returns { boolean } Returns true if the string isn't found in the array (meaning it would be unique if added to that array), returns false otherwise.
    */
   uniqueInArray: ({ string: t, array: e }) => !new Set(e).has(t)
-}, U = {
+}, I = {
   /**
    * Format a date in several standard formats
    * @param { Object } inputs
@@ -116,13 +116,13 @@ const x = {
    * @param { string } inputs.timezone Optional: The timezone to use for the DayOnly format
    * @returns { string } The formatted date as an ISO string.
    */
-  format: ({ date: t, type: e, timezone: s = "America/Denver" }) => {
+  format: ({ date: t, type: e, timezone: o = "America/Denver" }) => {
     switch (e) {
       case "DayOnly":
-        let o = u(t).format("YYYY-MM-DD");
-        return u.tz(o, s).set({ hour: 6, minute: 0 }).toISOString();
+        let i = c(t).format("YYYY-MM-DD");
+        return c.tz(i, o).set({ hour: 6, minute: 0 }).toISOString();
       case "Timestamp":
-        return u(t).toISOString();
+        return c(t).toISOString();
       default:
         throw new Error(
           `${e}: This type isn't supported, please check your spelling.`
@@ -130,16 +130,27 @@ const x = {
     }
   },
   // ALIASES
-  default: w.date,
+  default: b.date,
   // Default for dates
   wrap: x.date
   // Date BSON wrapper
-}, T = {
-  id: b,
-  object: I,
+}, U = {
+  /**
+   * Checks if the value of an input is different from its default value
+   * @param { Object } inputs
+   * @param { ?string } inputs.value Required: The current value of the input
+   * @param { ?string } inputs.initialData Required: The default value of the input
+   * @param { Object & { primary: string } } inputs.theme Required: The current theme being used
+   * @returns { ?string } If there's a difference, returns the HEX value to highlight the component. Otherwise, returns null.
+   */
+  inputDiff: ({ value: t, initialData: e, theme: o }) => t !== e ? `${o.primary}40` : null
+}, j = {
+  id: w,
+  object: f,
   string: D,
-  date: U
+  date: I,
+  behavior: U
 };
 export {
-  T as default
+  j as default
 };
