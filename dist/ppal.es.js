@@ -26,7 +26,7 @@ function y(t, e, o) {
     throw new Error("Random bytes length must be >= 16");
   return i[6] = i[6] & 15 | 64, i[8] = i[8] & 63 | 128, S(i);
 }
-const x = {
+const p = {
   /**
    * Wrap an id in valid BSON syntax for objectIds in MongoDB
    * @param { string } value Required: The objectId to wrap in BSON
@@ -60,7 +60,7 @@ const x = {
    */
   generateUuid: () => y(),
   // ALIASES
-  wrap: x.id
+  wrap: p.id
   // ObjectId BSON wrapper
 }, D = {
   /**
@@ -79,12 +79,12 @@ const x = {
         i[d] = s;
       else if (!r.isEqual(s, t[c]))
         if (r.isObject(s) && r.isObject(t[c])) {
-          const p = (void 0).diff({
+          const x = (void 0).diff({
             original: t[c],
-            value: s,
+            updated: s,
             prefix: `${d}`
           });
-          r.assign(i, p);
+          r.assign(i, x);
         } else
           i[d] = s;
     },
@@ -132,7 +132,7 @@ const x = {
   // ALIASES
   default: b.date,
   // Default for dates
-  wrap: x.date
+  wrap: p.date
   // Date BSON wrapper
 }, U = {
   /**
