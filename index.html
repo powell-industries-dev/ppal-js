@@ -9,14 +9,62 @@
             import ppal from "./lib/main.js";
 
             console.log(ppal);
+            console.log(ppal.object.strip());
 
-            let testValue = ppal.id.generateObjectId();
-            let defaultDate = ppal.date.default();
-            // console.log(
-            //     `MongoDB ObjectId: ${testValue}, UUID: ${ppal.id.newUuid()}`,
-            // );
-            console.log("wrap implementation 1", ppal.id.wrap(testValue));
-            console.log("wrap test 2", ppal.date.wrap(defaultDate));
+            let task = {
+                _id: "68d6a75acffcf23c34c2fa68",
+                collection: null,
+                collection_id: null,
+                name: "This is a test",
+                status: "To Do",
+                employee_ids: ["680913f66bb60600169275ec"],
+                schedule: {
+                    date_due: {
+                        $date: "2025-09-26T12:00:00.000Z",
+                    },
+                    all_day: true,
+                },
+                metadata: {
+                    notes: "This is a test for creating new tasks. This is another test/",
+                    created_by: "680913f66bb60600169275ec",
+                    date_created: {
+                        $date: "2025-09-26T14:46:49.230Z",
+                    },
+                    date_updated: {
+                        $date: "2025-09-27T17:22:58.302Z",
+                    },
+                    date_completed: null,
+                },
+            };
+
+            let test = ppal.object.strip(task);
+            console.log(test);
+
+            let initialData = {
+                _id: "68d6a75acffcf23c34c2fa68",
+                collection: null,
+                collection_id: null,
+                name: "This is a test",
+                status: "To Do",
+                employee_ids: ["680913f66bb60600169275ec"],
+                schedule: {
+                    date_due: "2025-09-26T12:00:00.000Z",
+                    all_day: true,
+                },
+                metadata: {
+                    notes: "This is a test for creating new tasks",
+                    created_by: "680913f66bb60600169275ec",
+                    date_created: "2025-09-26T14:46:49.230Z",
+                    date_updated: "2025-09-26T16:22:32.404Z",
+                    date_completed: null,
+                },
+            };
+
+            const DIFF = ppal.object.diff({
+                original: initialData,
+                updated: test,
+            });
+            console.log("diff output", DIFF);
         </script>
         <p>This is the testing page for the PPAL Javascript library.</p>
     </body>
