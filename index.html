@@ -65,6 +65,9 @@
                 updated: test,
             });
             console.log("diff output", DIFF);
+
+            const DIFF_WRAPPED = ppal.object.wrap(DIFF);
+            console.log("diff but wrapped", DIFF_WRAPPED);
         </script>
         <p>This is the testing page for the PPAL Javascript library.</p>
     </body>
