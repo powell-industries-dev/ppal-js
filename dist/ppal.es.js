@@ -3,28 +3,28 @@ import e from "lodash";
 const o = [];
 for (let t = 0; t < 256; ++t)
   o.push((t + 256).toString(16).slice(1));
-function x(t, n = 0) {
+function y(t, n = 0) {
   return (o[t[n + 0]] + o[t[n + 1]] + o[t[n + 2]] + o[t[n + 3]] + "-" + o[t[n + 4]] + o[t[n + 5]] + "-" + o[t[n + 6]] + o[t[n + 7]] + "-" + o[t[n + 8]] + o[t[n + 9]] + "-" + o[t[n + 10]] + o[t[n + 11]] + o[t[n + 12]] + o[t[n + 13]] + o[t[n + 14]] + o[t[n + 15]]).toLowerCase();
 }
 let d;
-const y = new Uint8Array(16);
-function l() {
+const x = new Uint8Array(16);
+function h() {
   if (!d) {
     if (typeof crypto > "u" || !crypto.getRandomValues)
       throw new Error("crypto.getRandomValues() not supported. See https://github.com/uuidjs/uuid#getrandomvalues-not-supported");
     d = crypto.getRandomValues.bind(crypto);
   }
-  return d(y);
+  return d(x);
 }
-const h = typeof crypto < "u" && crypto.randomUUID && crypto.randomUUID.bind(crypto), m = { randomUUID: h };
-function S(t, n, i) {
+const S = typeof crypto < "u" && crypto.randomUUID && crypto.randomUUID.bind(crypto), m = { randomUUID: S };
+function g(t, n, r) {
   if (m.randomUUID && !t)
     return m.randomUUID();
   t = t || {};
-  const r = t.random ?? t.rng?.() ?? l();
-  if (r.length < 16)
+  const i = t.random ?? t.rng?.() ?? h();
+  if (i.length < 16)
     throw new Error("Random bytes length must be >= 16");
-  return r[6] = r[6] & 15 | 64, r[8] = r[8] & 63 | 128, x(r);
+  return i[6] = i[6] & 15 | 64, i[8] = i[8] & 63 | 128, y(i);
 }
 const f = {
   /**
@@ -42,8 +42,21 @@ const f = {
    */
   date: function(t) {
     return { $date: t };
+  },
+  /**
+   * Wrap date properties within a diff object
+   * @param { Object } object Required: The object to wrap
+   * @returns { Object } A diff object with BSON-wrapped dates
+   */
+  object: function(t) {
+    const n = {};
+    for (const r of e.keys(t)) {
+      const i = t[r];
+      e.includes(r, "date") ? n[r] = p.wrap(i) : n[r] = i;
+    }
+    return n;
   }
-}, g = {
+}, w = {
   /**
    * Returns the default date
    * @returns { string } The current date and time formatted as an ISO string.
@@ -51,7 +64,7 @@ const f = {
   date: function() {
     return u(/* @__PURE__ */ new Date()).toISOString();
   }
-}, w = {
+}, b = {
   /**
    * Generates a unique MongoDB-compatible ObjectId
    * @returns {string} A new MongoDB ObjectId string.
@@ -65,12 +78,12 @@ const f = {
    * @returns {string} A new v4 uuid string.
    */
   generateUuid: function() {
-    return S();
+    return g();
   },
   // ALIASES
   wrap: f.id
   // ObjectId BSON wrapper
-}, b = {
+}, D = {
   /**
    * Compares two objects and returns an object containing only the differences
    * @param { Object } inputs
@@ -79,23 +92,23 @@ const f = {
    * @param { string } inputs.prefix Optional: Default is an empty string.
    * @returns { Object } An object containing only the differences between `inputs.original` and `inputs.updated`.
    */
-  diff: function({ original: t, updated: n, prefix: i = "" }) {
-    return !e.isObject(t) || !e.isObject(n) ? e.isEqual(t, n) ? {} : { [i.slice(0, -1)]: n } : e.isArray(t) && e.isArray(n) ? e.isEqual(t, n) ? {} : { [i.slice(0, -1)]: n } : e.transform(
+  diff: function({ original: t, updated: n, prefix: r = "" }) {
+    return !e.isObject(t) || !e.isObject(n) ? e.isEqual(t, n) ? {} : { [r.slice(0, -1)]: n } : e.isArray(t) && e.isArray(n) ? e.isEqual(t, n) ? {} : { [r.slice(0, -1)]: n } : e.transform(
       n,
-      (r, s, c) => {
-        const a = `${i}${c}`;
+      (i, s, c) => {
+        const a = `${r}${c}`;
         if (!e.has(t, c))
-          r[a] = s;
+          i[a] = s;
         else if (!e.isEqual(s, t[c]))
           if (e.isObject(s) && e.isObject(t[c])) {
-            const p = this.diff({
+            const l = this.diff({
               original: t[c],
               updated: s,
               prefix: `${a}.`
             });
-            e.assign(r, p);
+            e.assign(i, l);
           } else
-            r[a] = s;
+            i[a] = s;
       },
       {}
     );
@@ -108,7 +121,7 @@ const f = {
    * @returns { boolean } Returns true if at least one property if found, returns false otherwise.
    */
   hasProperties: function({ object: t, properties: n }) {
-    return e.some(n, (i) => !e.isUndefined(e.get(t, i)));
+    return e.some(n, (r) => !e.isUndefined(e.get(t, r)));
   },
   /**
    * Recursively “unwrap” values that were wrapped by a `$…` object.
@@ -120,27 +133,29 @@ const f = {
   strip: function(t, n = !1) {
     if (!e.isObjectLike(t) && n)
       throw new TypeError("strip expects an object");
-    const i = {};
-    for (const r of e.keys(t)) {
-      const s = t[r];
+    const r = {};
+    for (const i of e.keys(t)) {
+      const s = t[i];
       if (e.isArray(s)) {
-        i[r] = e.cloneDeep(s);
+        r[i] = e.cloneDeep(s);
         continue;
       }
       if (e.isObjectLike(s)) {
         const c = e.keys(s);
         if (e.size(c) === 1 && e.startsWith(c[0], "$")) {
-          i[r] = s[c[0]];
+          r[i] = s[c[0]];
           continue;
         }
-        i[r] = this.strip(s, !0);
+        r[i] = this.strip(s, !0);
         continue;
       }
-      i[r] = s;
+      r[i] = s;
     }
-    return i;
-  }
-}, D = {
+    return r;
+  },
+  // ALIASES
+  wrap: f.object
+}, I = {
   /**
    * Checks if a string is unique within an array of strings
    * @param { Object } inputs
@@ -151,7 +166,7 @@ const f = {
   uniqueInArray: function({ string: t, array: n }) {
     return !new Set(n).has(t);
   }
-}, I = {
+}, p = {
   /**
    * Format a date in several standard formats
    * @param { Object } inputs
@@ -160,11 +175,11 @@ const f = {
    * @param { string } inputs.timezone Optional: The timezone to use for the DayOnly format
    * @returns { string } The formatted date as an ISO string.
    */
-  format: function({ date: t, type: n, timezone: i = "America/Denver" }) {
+  format: function({ date: t, type: n, timezone: r = "America/Denver" }) {
     switch (n) {
       case "DayOnly":
-        let r = u(t).format("YYYY-MM-DD");
-        return u.tz(r, i).set({ hour: 6, minute: 0 }).toISOString();
+        let i = u(t).format("YYYY-MM-DD");
+        return u.tz(i, r).set({ hour: 6, minute: 0 }).toISOString();
       case "Timestamp":
         return u(t).toISOString();
       default:
@@ -174,7 +189,7 @@ const f = {
     }
   },
   // ALIASES
-  default: g.date,
+  default: w.date,
   // Default for dates
   wrap: f.date
   // Date BSON wrapper
@@ -187,14 +202,14 @@ const f = {
    * @param { Object & { primary: string } } inputs.theme Required: The current theme being used
    * @returns { ?string } If there's a difference, returns the HEX value to highlight the component. Otherwise, returns null.
    */
-  inputDiff: function({ value: t, initialData: n, theme: i }) {
-    return t !== n ? `${i.primary}40` : null;
+  inputDiff: function({ value: t, initialData: n, theme: r }) {
+    return t !== n ? `${r.primary}40` : null;
   }
 }, j = {
-  id: w,
-  object: b,
-  string: D,
-  date: I,
+  id: b,
+  object: D,
+  string: I,
+  date: p,
   behavior: O
 };
 export {
